@@ -19,17 +19,16 @@ def extract_longDiscription(file_name):
         long_description = fh.read()
     return long_description
 setuptools.setup(
-    name="FfactorialD",
-    version=get_version("FFD/__init__.py"),
+    name="barneySA",
+    version=get_version("BarneySA/__init__.py"),
     author="Jalil Nourisa",
     author_email="jalil.nourisa@gmail.com",
-    description="A general-purpose fractional factorial design",
+    description="A general-purpose sensitivity analsysi library based on fractional factorial design and the analysis of variance",
     long_description=extract_longDiscription("README.md"),
     long_description_content_type="text/markdown",
-    url="https://github.com/janursa/FFD",
+    url="https://github.com/janursa/barneySA",
     packages=setuptools.find_packages(),
-    install_requires=[ 'numpy >= 1.18.4',
-    'pprogress>=0.0.5', 'mpi4py >= 3.0.3', 'doepy >= 0.0.1'],
+    install_requires=[ 'numpy >= 1.18.4', 'mpi4py >= 3.0.3', 'doepy >= 0.0.1'],
     classifiers=[
         "Programming Language :: Python :: 3",
         # "License :: OSI Approved :: MIT License",

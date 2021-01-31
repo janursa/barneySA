@@ -3,7 +3,7 @@ Author: Jalil Nourisa
 """
 import time
 import os
-import progressbar
+# import progressbar
 import json
 import random
 class clock:
@@ -53,7 +53,7 @@ class SA:
             self.free_params = free_params
             self.free_params_keys = list(free_params.keys())
             self.free_params_bounds = list(free_params.values())
-            self.output_dir = os.path.join(self.settings["output_path"],"SA")
+            self.output_dir = os.path.join(self.settings["output_path"],"outputs")
             print("The list of free parameters: ",self.free_params_keys)
             try:
                 os.makedirs(self.output_dir)
@@ -126,7 +126,7 @@ class SA:
         paramsets = self.comm.bcast(paramsets,root = 0) 
 
         def run_model(start,end):
-            pb = progressbar.ProgressBar(end-start)
+            # pb = progressbar.ProgressBar(end-start)
             distances = []
             for i in range(start,end):
                 replicas = []
@@ -143,7 +143,7 @@ class SA:
                     continue
                 distance = sum(replicas)/len(replicas)
                 distances.append(distance)
-                pb.update()
+                # pb.update()
             # pb.done()
             return distances
         distances_perCore = run_model(portion[0],portion[1])

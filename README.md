@@ -1,34 +1,44 @@
 
   
 
-# Approximate Bayesian calculation (ABC)
+# A general-purpose library for sensitivity analysis using fractional factorial design and analysis of variance
 
   
 
-This package conducts generic ABC on a given model and parameters. Basically, ABC does the followings:
+This library conducts generic sensitivity analysis on a given model based on the ranges provided for the parameters. Basically, barneySA does the followings:
 
-- Sample uniformly from the n-dimensional space of the parameters 
+- Sample from the n-dimensional space of the parameters using fractional factorial design
 
 - Create a parameter set for each of sample sets
 
-- Run the given model for each parameter set and collect error value
+- Run the given model for each parameter set and collect distance value
 
-- Choose the best fits by the rejection algorithm 
+- Conduct the analysis of variance to determine the relative importance of parameters with respect to one another
 
   
 ## Getting started
 
 ### Quick start
 
-`pip install --upgrade ABayesianC`
+`pip install --upgrade barneySA`
 
 ```py
 
 # inside your script, e.g. test.py
 
-from ABC import tools
+from barneySA import tools
+free_params = { # define the parameters and their range
+    'P1' = [2,3],
+    'P2' = [1.2,4.3]
+}
+settings = { # define settings
+    "MPI_flag": True,
+    "replica_n": 2,
+    "output_path": "outputs/SA",
+    "model":MODEL # this is your model  
+}
 
-obj = tools.ABC(settings = settings, free_params = free_params)
+obj = tools.SA(free_params = free_params,settings = settings)
 
 obj.sample()
 
@@ -42,107 +52,22 @@ obj.postprocess()
 
 # in terminal
 
-mpiexec -n available_cpu_core python test.py
-
-# or
-
-mpiexec -n available_cpu_threads --use-hwthread-cpus python test.py
+mpiexec -n 'cpu_numbers' python test.py
 
 ```
 
-### More on it
+barneySA receives two inputs from users. First, the free parameters' list that is a python dictionary that contains the names and bounds (min and max) of each free parameter. Second, the settings that is another python dictionary that contains specifications of SA. Inside the specification, the model which is an object of the fomulated problem needs to be provided. The model object should have a function named 'run' that receives a parameter set (a sample of the given free parameters) and results in a distance value based on the goodness of fit considered for the problem in hand.
 
-ABC module receives two inputs from users.  First, the free parameters' list that is a python dictionary that contains the names and bounds (min and max) of each free parameter, as shown below:
-
-```python
-free_params = {
-    'p_name_1': [1.1,4.3], # [min,max]
-    'p_name_2': [6.4,23.1]
-}
-```
-Second, the settings that is another python dictionary that contains user-specific information:
-
-```py
-settings = {
-    "MPI_flag": True, # Use of MPI
-    "sample_n": 10000,  # Sample number
-    "top_n": 100, # Number of top selected samples, i.e. posterior
-    "output_path": "outputs", # Relative output directory to save the results
-    "run_func":custom_func, # A custom function that calculates the error for a given dataset
-    "args":{  # Optional arguments that `custom_func` requires during calculations
-        "model": Model, # e.g. the model that reads parameter set and returns some results
-        "replica_n":3 # e.g. number of replica run for each param set
-    }
-}
-```
-`run_func` is the most important parameter that needs to be designed specifically for each problem.  It can be generally formatted as:
-
-```py
-def custom_func(paramset,args):
-    return distance
-```
-Which receives a paramset, passed by the ABC algorithm, alongside with other parameters encapsulated as args that would be needed to calculate distance function by the user. This function ultimately returns the distance calculated for the given paramset, which is Python `float` variable.
-
-To elaborate `run_func` for a case example:
-
-```py
-def custom_func(paramset,args):
-    model = args['model']
-    empirical_data = user_defined_variable
-    results = model(paramset) # runs the model for the given param set
-    distance = np.abs(results - empirical_data) # distance is defined in this case as absolute difference
-    return distance
-```
-***Attentions***: `paramset` is a python dictionary contenting a set of parameter-value items as shown below. The user defined `model` must be able to integrate this parameter set. 
-```py
-{
-    'p_name_1':2.3,
-    'p_name_2':7.8
-}
-```
-More elaboration and examples will come soon.
-
-### Parallel or serial use
-
-For serial use case, simply command:
-
-```py
-
-from ABC import tools
-obj = tools.ABC(settings = settings, free_params = free_params)
-obj.sample()
-obj.run()
-obj.postprocess()
-```
-To run the model in parallel using MPI, save the above mentioned commands as a script and run it from Terminal:
-
-```py
-# in terminal
-mpiexec -n available_cpu_core python test.py
-```
-`available_cpu_core` is the CPU core number that user intend to allocate for this process. For more info, see [MPI for Python](https://mpi4py.readthedocs.io/en/stable/).
 
 ### Outputs
 
-The posteriors are outputed for each parameter as a json file which can be found on the given output directory. A box plot is also generated to compare prior and posterior distributions in a single graph, in SVG format.
+The library results in a value for each free parameters that shows the importance of that parameter with respect to the rest of the parameters.
 
-## Install
-
-Using pip manager:
-
--  `pip install --upgrade ABayesianC`
-
-Or, download the package and in the root folder, command:
-
--  `python3 setup.py install`
 
 ## Authors
 
 - Jalil Nourisa
 
-## Useful links
-
- [MPI for Python](https://mpi4py.readthedocs.io/en/stable/).
 
 ### Acknowledgments
 
