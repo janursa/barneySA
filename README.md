@@ -1,11 +1,9 @@
 
   
 
-# A general-purpose library for sensitivity analysis using fractional factorial design and analysis of variance
+# barneySA
 
-  
-
-This library conducts generic sensitivity analysis on a given model based on the ranges provided for the parameters. Basically, barneySA does the followings:
+A general-purpose library for sensitivity analysis using fractional factorial design and analysis of variance. The library conducts sensitivity analysis on a given model based on the ranges provided for the parameters. Basically, barneySA does the followings:
 
 - Sample from the n-dimensional space of the parameters using fractional factorial design
 
