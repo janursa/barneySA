@@ -59,6 +59,9 @@ barneySA receives two inputs from users. First, the free parameters' list that i
 
 The library results in a value for each free parameters that shows the importance of that parameter with respect to the rest of the parameters.
 
+## To cite
+Cite this library using [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4552580.svg)](https://doi.org/10.5281/zenodo.4552580)
+
 
 ## Authors
 
