@@ -40,7 +40,7 @@ obj.sample()
 
 obj.run()
 
-obj.postprocess()
+obj.postprocessing()
 
 ```
 
