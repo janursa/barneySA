@@ -30,7 +30,7 @@ free_params = { # define the parameters and their range
 settings = { # define settings
     "MPI_flag": True,
     "replica_n": 2,
-    "output_path": "outputs/SA",
+    "output_path": "",
     "model":MODEL # this is your model  
 }
 

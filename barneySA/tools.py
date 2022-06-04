@@ -85,8 +85,8 @@ class SA:
                 LB = [] # lower bound for one param
                 for param_set in self.param_sets:
                     flag = False
-                    #print("tag {} lower bound {} param {}".format(tag,lower_bound,param_set[tag]))
-                    if (round(param_set[tag],7) == lower_bound):
+                    # print("tag {} lower bound {} param {}".format(tag,lower_bound,param_set[tag]))
+                    if (round(param_set[tag],3) == lower_bound):
                         flag = True
                     LB.append(flag)
                 self.lower_bounds.update({tag:LB})
@@ -127,12 +127,13 @@ class SA:
 
         def run_model(start,end):
             # pb = progressbar.ProgressBar(end-start)
+            args = self.settings["args"]
             distances = []
             for i in range(start,end):
                 replicas = []
                 flag = True
                 for j in range(self.settings["replica_n"]):
-                    distance_replica = self.settings["model"](paramsets[i]).run()
+                    distance_replica = self.settings["model"](paramsets[i],**args).run()
                     if distance_replica is None:
                         distances.append(None)
                         flag = False
@@ -187,12 +188,14 @@ class SA:
                 fitness_values = np.append(fitness_values,fitness)
             PTTS_values = {}
             for key,value in self.lower_bounds.items():
+                # print(value)
                 PTTS_value = self.PTSS(value,fitness_values)
                 PTTS_values.update({key:PTTS_value})
             
             with open(self.output_dir+'/PTTS.json','w') as file:
                 file.write(json.dumps(PTTS_values, indent=2))
             print("SA postprocessing completed")
+            return PTTS_values
     def PTSS(self,lower_bound_indices,results_array):
         # Percentage total sum of squares
         # since results_array consists replicas, it needs to be averages for averaged based on #base::SA_settings.at("replica_n_SA") **/
@@ -210,7 +213,9 @@ class SA:
 
         count_lower_bound = 0 # counts the occurrence of the parameter in its lower bound value
         count_upper_bound = 0
+        # print(lower_bound_indices)
         for Iter in range(len(results_array)):
+            # print(lower_bound_indices[Iter])
             if lower_bound_indices[Iter] == True : # The parameter holds its lower bound value
                 sum_lower_bound += results_array[Iter]
                 count_lower_bound+=1
